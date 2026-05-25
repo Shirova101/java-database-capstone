@@ -30,10 +30,10 @@ public class Prescription {
     private String doctorNotes;
 
     public Prescription(
-      String patientName;
-      Long appointmentId;
-      String medication;
-      String dosage;
+      String patientName,
+      Long appointmentId,
+      String medication,
+      String dosage
     ) {
       this.PatientName = patientName;
       this.appointmentId = appointmentId;

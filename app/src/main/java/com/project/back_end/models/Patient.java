@@ -36,6 +36,10 @@ public class Patient {
     )
     private String phoneNumber;
 
+    @NotNull
+    @Size(max = 255)
+    private String address;
+
     public Long getId() {
         return id;
     }
