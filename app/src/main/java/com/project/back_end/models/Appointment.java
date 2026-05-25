@@ -5,6 +5,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Future;
+import jakarta.persistence.Transient;
+import java.time.*;
+
 
 
 @Entity
@@ -60,9 +64,6 @@ public class Appointment {
   }
   public void setPatient(Patient patient) {
     this.patient = patient;
-  }
-  public LocalDateTime getAppointmentTime() {
-    return appointmentTime;
   }
   public void setAppointmentTime(LocalDateTime appointmentTime) {
     this.appointmentTime = appointmentTime;
