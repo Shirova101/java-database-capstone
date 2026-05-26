@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.project.back_end.services.Service;
+import com.project.back_end.services.TokenService;
+import org.springframework.http.ResponseEntity;
 
 @Controller
 public class DashboardController {
@@ -23,13 +25,13 @@ public class DashboardController {
             @PathVariable String token
     ) {
 
-        Map<String, Object> result =
+        ResponseEntity<Map<String, String>> response =
                 service.validateToken(
                         token,
                         "admin"
                 );
 
-        if (result.isEmpty()) {
+        if (response.getStatusCode().is2xxSuccessful()) {
             return "admin/adminDashboard";
         }
 
@@ -43,13 +45,13 @@ public class DashboardController {
             @PathVariable String token
     ) {
 
-        Map<String, Object> result =
+        ResponseEntity<Map<String, String>> response =
                 service.validateToken(
                         token,
                         "doctor"
                 );
 
-        if (result.isEmpty()) {
+        if (response.getStatusCode().is2xxSuccessful()) {
             return "doctor/doctorDashboard";
         }
 

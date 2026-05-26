@@ -257,7 +257,7 @@ public class DoctorService {
 
         List<Doctor> doctors =
                 doctorRepository
-                        .findByNameContainingIgnoreCaseAndSpecialtyIgnoreCase(
+                        .findByNameContainingIgnoreCaseAndSpecialityIgnoreCase(
                                 name,
                                 specialty
                         );
@@ -301,7 +301,7 @@ public class DoctorService {
         return Map.of(
                 "doctors",
                 doctorRepository
-                        .findByNameContainingIgnoreCaseAndSpecialtyIgnoreCase(
+                        .findByNameContainingIgnoreCaseAndSpecialityIgnoreCase(
                                 name,
                                 specialty
                         )
@@ -317,7 +317,7 @@ public class DoctorService {
 
         List<Doctor> doctors =
                 doctorRepository
-                        .findBySpecialtyIgnoreCase(
+                        .findBySpecialityIgnoreCase(
                                 specialty
                         );
 
@@ -339,7 +339,7 @@ public class DoctorService {
         return Map.of(
                 "doctors",
                 doctorRepository
-                        .findBySpecialtyIgnoreCase(
+                        .findBySpecialityIgnoreCase(
                                 specialty
                         )
         );

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import com.project.back_end.models.Appointment;
 import com.project.back_end.services.AppointmentService;
 import com.project.back_end.services.Service;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("${api.path}appointments")
@@ -34,7 +35,7 @@ public class AppointmentController {
      */
     @GetMapping("/{date}/{patientName}/{token}")
     public ResponseEntity<Map<String, Object>> getAppointments(
-            @PathVariable String date,
+            @PathVariable LocalDate date,
             @PathVariable String patientName,
             @PathVariable String token
     ) {
@@ -155,7 +156,7 @@ public class AppointmentController {
         }
 
         return appointmentService.cancelAppointment(
-                id
+                id,token
         );
     }
 

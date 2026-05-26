@@ -43,9 +43,15 @@ public class Appointment {
   }
 
   @Transient
-  public LocalTime getAppointmentTime() {
+  public LocalTime getAppointmentTimeOnly() {
     return appointmentTime.toLocalTime();
   }
+  
+   @Transient
+  public LocalDateTime getAppointmentTime() {
+    return appointmentTime;
+  }
+
 
   public Long getId() {
     return id;

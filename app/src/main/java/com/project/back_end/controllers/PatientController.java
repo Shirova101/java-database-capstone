@@ -115,8 +115,7 @@ public class PatientController {
 
         return patientService.getPatientAppointment(
                 id,
-                token,
-                user
+                token
         );
     }
 

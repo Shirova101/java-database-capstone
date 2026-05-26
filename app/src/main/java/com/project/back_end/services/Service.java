@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 
 import com.project.back_end.DTO.Login;
 import com.project.back_end.models.Admin;
@@ -19,7 +18,6 @@ import com.project.back_end.repo.AdminRepository;
 import com.project.back_end.repo.DoctorRepository;
 import com.project.back_end.repo.PatientRepository;
 
-@Service
 public class Service {
 
     private final TokenService tokenService;
@@ -358,7 +356,7 @@ public class Service {
                 patientRepository
                         .findByEmailOrPhone(
                                 patient.getEmail(),
-                                patient.getPhone()
+                                patient.getPhoneNumber()
                         );
 
         return existing == null;

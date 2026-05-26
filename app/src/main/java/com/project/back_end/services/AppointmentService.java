@@ -10,13 +10,15 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import jakarta.transaction.Transactional;
+
 
 import com.project.back_end.models.Appointment;
 import com.project.back_end.repo.AppointmentRepository;
 import com.project.back_end.repo.DoctorRepository;
 import com.project.back_end.repo.PatientRepository;
+import com.project.back_end.services.TokenService;
+import org.springframework.http.HttpStatus;
 
 @Service
 public class AppointmentService {
@@ -38,27 +40,44 @@ public class AppointmentService {
 
 
     // Book appointment
-    @Transactional
-    public int bookAppointment(
-            Appointment appointment
-    ) {
+   // Book appointment
+        @Transactional
+        public ResponseEntity<Map<String, String>>
+        bookAppointment(
+                Appointment appointment
+        ) {
+
+        Map<String, String> response =
+                new HashMap<>();
 
         try {
 
-            appointmentRepository
-                    .save(
-                            appointment
-                    );
+                appointmentRepository
+                        .save(
+                                appointment
+                        );
 
-            return 1;
+                response.put(
+                        "message",
+                        "Appointment booked successfully"
+                );
+
+                return ResponseEntity
+                        .status(HttpStatus.CREATED)
+                        .body(response);
 
         } catch (Exception e) {
 
-            return 0;
+                response.put(
+                        "message",
+                        "Failed to book appointment"
+                );
 
+                return ResponseEntity
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(response);
         }
-
-    }
+        }
 
 
     // Update appointment
@@ -89,12 +108,23 @@ public class AppointmentService {
                     .body(response);
         }
 
-        Map<String, Object> validation =
+        int validation =
                 service.validateAppointment(
                         appointment
                 );
 
-        if (!validation.isEmpty()) {
+        if (validation == -1) {
+
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(
+                            Map.of(
+                                    "message",
+                                    "Doctor not found"
+                            )
+                    );
+        }
+        if (validation == 0) {
 
             response.put(
                     "message",
@@ -102,7 +132,7 @@ public class AppointmentService {
             );
 
             return ResponseEntity
-                    .badRequest()
+                    .badRequest() 
                     .body(response);
         }
 
@@ -120,126 +150,192 @@ public class AppointmentService {
                 .ok(response);
     }
 
-
-    // Cancel appointment
-    @Transactional
-    public ResponseEntity<Map<String, String>>
-    cancelAppointment(
-            long id,
-            String token
-    ) {
+        @Transactional
+        public ResponseEntity<Map<String, String>>
+        updateAppointmentStatus(
+                Long appointmentId
+        ) {
 
         Map<String, String> response =
                 new HashMap<>();
 
-        Optional<Appointment> appointment =
+        Optional<Appointment> existing =
                 appointmentRepository
-                        .findById(id);
+                        .findById(
+                                appointmentId
+                        );
 
-        if (appointment.isEmpty()) {
+        if (existing.isEmpty()) {
 
-            response.put(
-                    "message",
-                    "Appointment not found"
-            );
-
-            return ResponseEntity
-                    .badRequest()
-                    .body(response);
-        }
-
-        Long patientId =
-                tokenService.getId(
-                        token
+                response.put(
+                        "message",
+                        "Appointment not found"
                 );
 
-        if (!appointment
-                .get()
-                .getPatient()
-                .getId()
-                .equals(patientId)) {
-
-            response.put(
-                    "message",
-                    "Unauthorized"
-            );
-
-            return ResponseEntity
-                    .badRequest()
-                    .body(response);
+                return ResponseEntity
+                        .badRequest()
+                        .body(response);
         }
 
+        Appointment appointment =
+                existing.get();
+
+        appointment.setStatus(1);
+        // 0 = pending
+        // 1 = completed
+
         appointmentRepository
-                .delete(
-                        appointment.get()
+                .save(
+                        appointment
                 );
 
         response.put(
                 "message",
-                "Appointment cancelled"
+                "Appointment updated"
         );
 
         return ResponseEntity
                 .ok(response);
-    }
+
+        }
+
+
+        // Cancel appointment
+        @Transactional
+        public ResponseEntity<Map<String, String>>
+        cancelAppointment(
+                long id,
+                String token
+        ) {
+
+                Map<String, String> response =
+                        new HashMap<>();
+
+                Optional<Appointment> appointment =
+                        appointmentRepository
+                                .findById(id);
+
+                if (appointment.isEmpty()) {
+
+                        response.put(
+                                "message",
+                                "Appointment not found"
+                        );
+
+                        return ResponseEntity
+                                .badRequest()
+                                .body(response);
+                }
+
+                Long patientId =
+                        tokenService.getId(
+                                token
+                        );
+
+                if (!appointment
+                        .get()
+                        .getPatient()
+                        .getId()
+                        .equals(patientId)) {
+
+                        response.put(
+                                "message",
+                                "Unauthorized"
+                        );
+
+                        return ResponseEntity
+                                .badRequest()
+                                .body(response);
+                }
+
+                appointmentRepository
+                        .delete(
+                                appointment.get()
+                        );
+
+                response.put(
+                        "message",
+                        "Appointment cancelled"
+                );
+
+                return ResponseEntity
+                        .ok(response);
+        }
 
 
     // Get appointments
-    public Map<String, Object>
-    getAppointment(
-            String pname,
-            LocalDate date,
-            String token
-    ) {
+        public ResponseEntity<Map<String, Object>>
+        getAppointment(
+                LocalDate date,
+                String pname,
+                String token
+        ) {
 
         Map<String, Object> result =
                 new HashMap<>();
 
-        Long doctorId =
-                tokenService.getId(
-                        token
+        try {
+
+                Long doctorId =
+                        tokenService.getId(
+                                token
+                        );
+
+                LocalDateTime start =
+                        date.atStartOfDay();
+
+                LocalDateTime end =
+                        date
+                                .plusDays(1)
+                                .atStartOfDay();
+
+                List<Appointment> appointments;
+
+                if (
+                        pname == null
+                        || pname.equals("null")
+                        || pname.isBlank()
+                ) {
+
+                appointments =
+                        appointmentRepository
+                                .findByDoctorIdAndAppointmentTimeBetween(
+                                        doctorId,
+                                        start,
+                                        end
+                                );
+
+                } else {
+
+                appointments =
+                        appointmentRepository
+                                .findByDoctorIdAndPatient_NameContainingIgnoreCaseAndAppointmentTimeBetween(
+                                        doctorId,
+                                        pname,
+                                        start,
+                                        end
+                                );
+                }
+
+                result.put(
+                        "appointments",
+                        appointments
                 );
 
-        LocalDateTime start =
-                date.atStartOfDay();
+                return ResponseEntity
+                        .ok(result);
 
-        LocalDateTime end =
-                date
-                        .plusDays(1)
-                        .atStartOfDay();
+        } catch (Exception e) {
 
-        List<Appointment> appointments;
+                result.put(
+                        "message",
+                        "Error fetching appointments"
+                );
 
-        if (pname == null
-                || pname.equals("null")
-                || pname.isBlank()) {
-
-            appointments =
-                    appointmentRepository
-                            .findByDoctorIdAndAppointmentTimeBetween(
-                                    doctorId,
-                                    start,
-                                    end
-                            );
-
-        } else {
-
-            appointments =
-                    appointmentRepository
-                            .findByDoctorIdAndPatient_NameContainingIgnoreCaseAndAppointmentTimeBetween(
-                                    doctorId,
-                                    pname,
-                                    start,
-                                    end
-                            );
+                return ResponseEntity
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(result);
         }
-
-        result.put(
-                "appointments",
-                appointments
-        );
-
-        return result;
-    }
+}
 
 }

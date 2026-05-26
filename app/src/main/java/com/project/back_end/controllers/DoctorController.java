@@ -9,6 +9,9 @@ import com.project.back_end.DTO.Login;
 import com.project.back_end.models.Doctor;
 import com.project.back_end.services.DoctorService;
 import com.project.back_end.services.Service;
+import java.time.LocalDate;
+import java.util.HashMap;
+
 
 @RestController
 @RequestMapping("${api.path}doctor")
@@ -36,7 +39,7 @@ public class DoctorController {
     public ResponseEntity<Map<String, Object>> getDoctorAvailability(
             @PathVariable String user,
             @PathVariable Long doctorId,
-            @PathVariable String date,
+            @PathVariable LocalDate date,
             @PathVariable String token
     ) {
 
@@ -57,11 +60,21 @@ public class DoctorController {
                             )
                     );
         }
+        Map<String,Object>
+        response =
+        new HashMap<>();
 
-        return doctorService.getDoctorAvailability(
+        response.put(
+        "doctors_availabilty",
+        doctorService.getDoctorAvailability(
                 doctorId,
                 date
+        )
         );
+
+        return ResponseEntity
+        .ok(response);
+
     }
 
 
@@ -71,7 +84,17 @@ public class DoctorController {
     @GetMapping
     public ResponseEntity<Map<String, Object>> getDoctors() {
 
-        return doctorService.getDoctors();
+        Map<String,Object>
+        response =
+        new HashMap<>();
+
+        response.put(
+        "doctors",
+        doctorService.getDoctors()
+        );
+
+        return ResponseEntity
+        .ok(response);
     }
 
 
@@ -79,10 +102,10 @@ public class DoctorController {
      * Add doctor (admin only)
      */
     @PostMapping("/{token}")
-    public ResponseEntity<Map<String, String>> saveDoctor(
-            @RequestBody Doctor doctor,
-            @PathVariable String token
-    ) {
+        public ResponseEntity<Map<String, String>> saveDoctor(
+                @RequestBody Doctor doctor,
+                @PathVariable String token
+        ) {
 
         ResponseEntity<Map<String, String>> validation =
                 service.validateToken(
@@ -91,13 +114,45 @@ public class DoctorController {
                 );
 
         if (!validation.getBody().isEmpty()) {
-            return validation;
+                return validation;
         }
 
-        return doctorService.saveDoctor(
-                doctor
-        );
-    }
+        int result =
+                doctorService.saveDoctor(
+                        doctor
+                );
+
+        if (result == 1) {
+
+                return ResponseEntity.ok(
+                        Map.of(
+                                "message",
+                                "Doctor saved successfully"
+                        )
+                );
+
+        }
+
+        if (result == -1) {
+
+                return ResponseEntity.badRequest()
+                        .body(
+                                Map.of(
+                                        "message",
+                                        "Doctor already exists"
+                                )
+                        );
+
+        }
+
+        return ResponseEntity.internalServerError()
+                .body(
+                        Map.of(
+                                "message",
+                                "Error saving doctor"
+                        )
+                );
+        }
 
 
     /*
@@ -118,10 +173,10 @@ public class DoctorController {
      * Update doctor
      */
     @PutMapping("/{token}")
-    public ResponseEntity<Map<String, String>> updateDoctor(
-            @RequestBody Doctor doctor,
-            @PathVariable String token
-    ) {
+        public ResponseEntity<Map<String, String>> updateDoctor(
+                @RequestBody Doctor doctor,
+                @PathVariable String token
+        ) {
 
         ResponseEntity<Map<String, String>> validation =
                 service.validateToken(
@@ -130,23 +185,55 @@ public class DoctorController {
                 );
 
         if (!validation.getBody().isEmpty()) {
-            return validation;
+                return validation;
         }
 
-        return doctorService.updateDoctor(
-                doctor
-        );
-    }
+        int result =
+                doctorService.updateDoctor(
+                        doctor
+                );
+
+        if (result == 1) {
+
+                return ResponseEntity.ok(
+                        Map.of(
+                                "message",
+                                "Doctor updated"
+                        )
+                );
+
+        }
+
+        if (result == -1) {
+
+                return ResponseEntity.badRequest()
+                        .body(
+                                Map.of(
+                                        "message",
+                                        "Doctor not found"
+                                )
+                        );
+
+        }
+
+        return ResponseEntity.internalServerError()
+                .body(
+                        Map.of(
+                                "message",
+                                "Update failed"
+                        )
+                );
+        }
 
 
     /*
      * Delete doctor
      */
     @DeleteMapping("/{id}/{token}")
-    public ResponseEntity<Map<String, String>> deleteDoctor(
-            @PathVariable Long id,
-            @PathVariable String token
-    ) {
+        public ResponseEntity<Map<String, String>> deleteDoctor(
+                @PathVariable Long id,
+                @PathVariable String token
+        ) {
 
         ResponseEntity<Map<String, String>> validation =
                 service.validateToken(
@@ -155,13 +242,45 @@ public class DoctorController {
                 );
 
         if (!validation.getBody().isEmpty()) {
-            return validation;
+                return validation;
         }
 
-        return doctorService.deleteDoctor(
-                id
-        );
-    }
+        int result =
+                doctorService.deleteDoctor(
+                        id
+                );
+
+        if (result == 1) {
+
+                return ResponseEntity.ok(
+                        Map.of(
+                                "message",
+                                "Doctor deleted"
+                        )
+                );
+
+        }
+
+        if (result == -1) {
+
+                return ResponseEntity.badRequest()
+                        .body(
+                                Map.of(
+                                        "message",
+                                        "Doctor not found"
+                                )
+                        );
+
+        }
+
+        return ResponseEntity.internalServerError()
+                .body(
+                        Map.of(
+                                "message",
+                                "Delete failed"
+                        )
+                );
+        }
 
 
     /*

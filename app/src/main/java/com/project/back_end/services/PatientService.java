@@ -30,18 +30,44 @@ public class PatientService {
 
 
     // Save patient
-    public int createPatient(Patient patient) {
+        public ResponseEntity<Map<String, String>>
+        createPatient(
+                Patient patient
+        ) {
+
+        Map<String, String> response =
+                new HashMap<>();
 
         try {
-            patientRepository.save(patient);
-            return 1;
+
+                patientRepository
+                        .save(
+                                patient
+                        );
+
+                response.put(
+                        "message",
+                        "Patient created successfully"
+                );
+
+                return ResponseEntity
+                        .status(HttpStatus.CREATED)
+                        .body(response);
 
         } catch (Exception e) {
 
-            e.printStackTrace();
-            return 0;
+                e.printStackTrace();
+
+                response.put(
+                        "message",
+                        "Failed to create patient"
+                );
+
+                return ResponseEntity
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(response);
         }
-    }
+        }
 
 
     // Get all appointments for logged-in patient
@@ -148,7 +174,7 @@ public class PatientService {
 
             List<AppointmentDTO> appointments =
                     appointmentRepository
-                            .findByPatientIdAndStatus(
+                            .findByPatient_IdAndStatusOrderByAppointmentTimeAsc(
                                     id,
                                     status
                             )
@@ -191,7 +217,7 @@ public class PatientService {
 
             List<AppointmentDTO> appointments =
                     appointmentRepository
-                            .findByDoctorNameAndPatientId(
+                            .filterByDoctorNameAndPatientId(
                                     name,
                                     patientId
                             )
@@ -347,7 +373,7 @@ public class PatientService {
                 a.getPatient().getId(),
                 a.getPatient().getName(),
                 a.getPatient().getEmail(),
-                a.getPatient().getPhone(),
+                a.getPatient().getPhoneNumber(),
                 a.getPatient().getAddress(),
 
                 a.getAppointmentTime(),
