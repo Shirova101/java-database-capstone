@@ -122,4 +122,488 @@
 
   16. **Render the Header**: Finally, the `renderHeader()` function is called to initialize the header rendering process when the page loads.
 */
-   
+/* header.js */
+
+/*
+=====================================================
+Reusable Dynamic Header
+=====================================================
+
+Responsibilities:
+
+1. Detect current page
+2. Read login session
+3. Render role-specific navigation
+4. Attach events
+5. Handle logout
+
+Roles:
+- admin
+- doctor
+- patient
+- loggedPatient
+=====================================================
+*/
+
+
+
+function renderHeader() {
+
+
+
+    /*
+    Header placeholder
+    */
+
+    const headerDiv =
+        document.getElementById(
+            "header"
+        );
+
+
+
+    if (!headerDiv) {
+
+        return;
+
+    }
+
+
+
+    /*
+    =================================
+    HOMEPAGE
+    Clear previous session
+    =================================
+    */
+
+    if (
+
+        window.location.pathname
+            .endsWith("/")
+
+    ) {
+
+        localStorage.removeItem(
+            "userRole"
+        );
+
+        localStorage.removeItem(
+            "token"
+        );
+
+
+
+        headerDiv.innerHTML = `
+
+        <header class="header">
+
+            <div class="logo-section">
+
+                <img
+                    src="../assets/images/logo/logo.png"
+                    alt="Hospital CMS Logo"
+                    class="logo-img"
+                />
+
+                <span class="logo-title">
+
+                    Hospital CMS
+
+                </span>
+
+            </div>
+
+        </header>
+
+        `;
+
+        return;
+
+    }
+
+
+
+    /*
+    Current Session
+    */
+
+    const role =
+        localStorage.getItem(
+            "userRole"
+        );
+
+    const token =
+        localStorage.getItem(
+            "token"
+        );
+
+
+
+    /*
+    Invalid Session
+    */
+
+    if (
+
+        (
+
+            role === "loggedPatient"
+
+            ||
+
+            role === "admin"
+
+            ||
+
+            role === "doctor"
+
+        )
+
+        &&
+
+        !token
+
+    ) {
+
+        localStorage.removeItem(
+            "userRole"
+        );
+
+        alert(
+            "Session expired or invalid login. Please log in again."
+        );
+
+        window.location.href =
+            "/";
+
+        return;
+
+    }
+
+
+
+    /*
+    Base Header
+    */
+
+    let headerContent = `
+
+    <header class="header">
+
+        <div class="logo-section">
+
+            <img
+                src="../assets/images/logo/logo.png"
+                class="logo-img"
+            />
+
+            <span class="logo-title">
+
+                Hospital CMS
+
+            </span>
+
+        </div>
+
+        <nav>
+
+    `;
+
+
+
+    /*
+    =====================
+    ADMIN
+    =====================
+    */
+
+    if (
+
+        role === "admin"
+
+    ) {
+
+        headerContent += `
+
+        <button
+            id="addDocBtn"
+            class="adminBtn"
+        >
+
+            Add Doctor
+
+        </button>
+
+        <a
+            href="#"
+            id="logoutBtn"
+        >
+
+            Logout
+
+        </a>
+
+        `;
+
+    }
+
+
+
+    /*
+    =====================
+    DOCTOR
+    =====================
+    */
+
+    else if (
+
+        role === "doctor"
+
+    ) {
+
+        headerContent += `
+
+        <button
+            class="adminBtn"
+            id="doctorHome"
+        >
+
+            Home
+
+        </button>
+
+        <a
+            href="#"
+            id="logoutBtn"
+        >
+
+            Logout
+
+        </a>
+
+        `;
+
+    }
+
+
+
+    /*
+    =====================
+    PATIENT
+    =====================
+    */
+
+    else if (
+
+        role === "patient"
+
+    ) {
+
+        headerContent += `
+
+        <button
+            id="patientLogin"
+            class="adminBtn"
+        >
+
+            Login
+
+        </button>
+
+        <button
+            id="patientSignup"
+            class="adminBtn"
+        >
+
+            Sign Up
+
+        </button>
+
+        `;
+
+    }
+
+
+
+    /*
+    =====================
+    LOGGED PATIENT
+    =====================
+    */
+
+    else if (
+
+        role === "loggedPatient"
+
+    ) {
+
+        headerContent += `
+
+        <button
+            id="home"
+            class="adminBtn"
+        >
+
+            Home
+
+        </button>
+
+        <button
+            id="patientAppointments"
+            class="adminBtn"
+        >
+
+            Appointments
+
+        </button>
+
+        <a
+            href="#"
+            id="logoutPatientBtn"
+        >
+
+            Logout
+
+        </a>
+
+        `;
+
+    }
+
+
+
+    headerContent += `
+
+        </nav>
+
+    </header>
+
+    `;
+
+
+
+    /*
+    Render Header
+    */
+
+    headerDiv.innerHTML =
+        headerContent;
+
+
+
+    attachHeaderButtonListeners();
+
+}
+
+
+
+/*
+=================================
+Attach Listeners
+=================================
+*/
+
+function attachHeaderButtonListeners() {
+
+
+
+    const logoutBtn =
+        document.getElementById(
+            "logoutBtn"
+        );
+
+
+
+    const logoutPatientBtn =
+        document.getElementById(
+            "logoutPatientBtn"
+        );
+
+
+
+    if (logoutBtn) {
+
+        logoutBtn.addEventListener(
+
+            "click",
+
+            logout
+
+        );
+
+    }
+
+
+
+    if (
+
+        logoutPatientBtn
+
+    ) {
+
+        logoutPatientBtn.addEventListener(
+
+            "click",
+
+            logoutPatient
+
+        );
+
+    }
+
+}
+
+
+
+/*
+Admin / Doctor Logout
+*/
+
+function logout() {
+
+    localStorage.removeItem(
+        "token"
+    );
+
+    localStorage.removeItem(
+        "userRole"
+    );
+
+    window.location.href =
+        "/";
+
+}
+
+
+
+/*
+Patient Logout
+*/
+
+function logoutPatient() {
+
+    localStorage.removeItem(
+        "token"
+    );
+
+    localStorage.setItem(
+
+        "userRole",
+
+        "patient"
+
+    );
+
+    window.location.href =
+        "/pages/patientDashboard.html";
+
+}
+
+
+
+/*
+Initialize
+*/
+
+renderHeader();   

@@ -102,3 +102,238 @@
   Call the renderFooter function to populate the footer in the page
 
 */
+/* footer.js */
+
+/*
+======================================================
+Reusable Footer Component
+======================================================
+
+This file dynamically injects the footer into pages.
+
+Footer contains:
+
+1. Hospital Branding
+2. Copyright
+3. Company Links
+4. Support Links
+5. Legal Links
+
+Each page only needs:
+
+<div id="footer"></div>
+
+This script handles rendering.
+======================================================
+*/
+
+
+
+/*
+------------------------------------------------------
+Function:
+renderFooter()
+
+Purpose:
+Render footer HTML into #footer
+------------------------------------------------------
+*/
+
+function renderFooter() {
+
+
+
+    /*
+    Select footer placeholder
+    */
+
+    const footer =
+        document.getElementById(
+            "footer"
+        );
+
+
+
+    /*
+    Stop if page
+    doesn't contain footer
+    */
+
+    if (!footer) {
+
+        return;
+
+    }
+
+
+
+    /*
+    --------------------------------------------------
+    Inject Footer HTML
+    --------------------------------------------------
+    */
+
+    footer.innerHTML = `
+
+    <footer class="footer">
+
+
+
+        <!-- Main Footer Container -->
+
+        <div class="footer-container">
+
+
+
+            <!-- =====================
+                 Branding Section
+            ====================== -->
+
+            <div class="footer-logo">
+
+                <img
+                    src="../assets/images/logo/logo.png"
+                    alt="Hospital CMS Logo"
+                />
+
+                <p>
+
+                    © Copyright
+                    2025.
+
+                    All Rights Reserved
+                    by Hospital CMS.
+
+                </p>
+
+            </div>
+
+
+
+            <!-- =====================
+                 Footer Links
+            ====================== -->
+
+            <div class="footer-links">
+
+
+
+                <!-- Company -->
+
+                <div class="footer-column">
+
+                    <h4>
+
+                        Company
+
+                    </h4>
+
+                    <a href="#">
+
+                        About
+
+                    </a>
+
+                    <a href="#">
+
+                        Careers
+
+                    </a>
+
+                    <a href="#">
+
+                        Press
+
+                    </a>
+
+                </div>
+
+
+
+                <!-- Support -->
+
+                <div class="footer-column">
+
+                    <h4>
+
+                        Support
+
+                    </h4>
+
+                    <a href="#">
+
+                        Account
+
+                    </a>
+
+                    <a href="#">
+
+                        Help Center
+
+                    </a>
+
+                    <a href="#">
+
+                        Contact Us
+
+                    </a>
+
+                </div>
+
+
+
+                <!-- Legals -->
+
+                <div class="footer-column">
+
+                    <h4>
+
+                        Legals
+
+                    </h4>
+
+                    <a href="#">
+
+                        Terms & Conditions
+
+                    </a>
+
+                    <a href="#">
+
+                        Privacy Policy
+
+                    </a>
+
+                    <a href="#">
+
+                        Licensing
+
+                    </a>
+
+                </div>
+
+
+
+            </div>
+
+
+
+        </div>
+
+    </footer>
+
+    `;
+
+}
+
+
+
+/*
+------------------------------------------------------
+Auto Render Footer
+------------------------------------------------------
+Runs immediately after script loads
+------------------------------------------------------
+*/
+
+renderFooter();

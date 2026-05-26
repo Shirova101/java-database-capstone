@@ -1,4 +1,495 @@
 /* This is the style sheet for the doctorDashboard.html */
+/* This is the style sheet for doctorDashboard.html */
+
+
+/* ===========================
+   GLOBAL RESET
+=========================== */
+
+/*
+Removes browser defaults.
+
+margin: removes outer spacing
+padding: removes inner spacing
+box-sizing: includes border + padding
+inside final dimensions
+*/
+
+* {
+
+    margin: 0;
+
+    padding: 0;
+
+    box-sizing: border-box;
+
+}
+
+
+
+/* ===========================
+   HTML + BODY
+=========================== */
+
+/*
+Full viewport layout
+
+Arial chosen for readability
+*/
+
+html,
+body {
+
+    height: 100%;
+
+    font-family:
+        Arial,
+        sans-serif;
+
+}
+
+
+
+/* ===========================
+   PAGE WRAPPER
+=========================== */
+
+/*
+Vertical layout
+
+Header
+↓
+
+Main
+↓
+
+Footer
+*/
+
+.wrapper {
+
+    display: flex;
+
+    flex-direction: column;
+
+    min-height: 100vh;
+
+}
+
+
+
+/* ===========================
+   MAIN CONTENT
+=========================== */
+
+/*
+Main dashboard area
+
+flex-grow:
+fills remaining space
+
+align-items:
+centers horizontally
+*/
+
+.main-content {
+
+    flex-grow: 1;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    padding: 40px;
+
+}
+
+
+
+/* ===========================
+   SEARCH SECTION
+=========================== */
+
+/*
+Centers search input
+*/
+
+.search-section {
+
+    width: 100%;
+
+    display: flex;
+
+    justify-content: center;
+
+    margin-bottom: 20px;
+
+}
+
+
+
+/* ===========================
+   SEARCH BAR
+=========================== */
+
+/*
+Rounded input
+
+comfortable padding
+*/
+
+.searchBar,
+#searchBar {
+
+    width: 500px;
+
+    max-width: 100%;
+
+    padding: 12px;
+
+    border-radius: 10px;
+
+    border:
+
+        1px solid #ddd;
+
+    font-size: 16px;
+
+}
+
+
+
+.searchBar:focus,
+#searchBar:focus {
+
+    outline: none;
+
+    border-color:
+
+        #015c5d;
+
+}
+
+
+
+/* ===========================
+   FILTER SECTION
+=========================== */
+
+/*
+Today button
++
+
+Date picker
+*/
+
+.filter-section {
+
+    display: flex;
+
+    gap: 20px;
+
+    align-items: center;
+
+    margin-bottom: 40px;
+
+    flex-wrap: wrap;
+
+}
+
+
+
+/* ===========================
+   TODAY BUTTON
+=========================== */
+
+.today-btn,
+#todayButton {
+
+    background-color:
+
+        #015c5d;
+
+    color:
+
+        white;
+
+    padding:
+
+        10px 18px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    transition: .25s;
+
+}
+
+
+
+.today-btn:hover,
+#todayButton:hover {
+
+    background:
+
+        #017d7e;
+
+}
+
+
+
+/* ===========================
+   DATE PICKER
+=========================== */
+
+.date-picker,
+#datePicker {
+
+    padding: 10px;
+
+    border-radius: 8px;
+
+    height: 40px;
+
+}
+
+
+
+/* ===========================
+   TABLE HEADER TITLE
+=========================== */
+
+.table-header {
+
+    font-size: 24px;
+
+    color: #015c5d;
+
+    margin-bottom: 30px;
+
+}
+
+
+
+/* ===========================
+   TABLE
+=========================== */
+
+/*
+Full width
+
+clean borders
+*/
+
+table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    margin-top: 20px;
+
+    font-family:
+
+        sans-serif;
+
+}
+
+
+
+/* ===========================
+   TABLE HEAD
+=========================== */
+
+thead {
+
+    background:
+
+        #33333310;
+
+    color:
+
+        white;
+
+}
+
+
+
+/* ===========================
+   TABLE CELLS
+=========================== */
+
+th,
+td {
+
+    padding:
+
+        12px 16px;
+
+    text-align: center;
+
+    border-bottom:
+
+        1px solid #ddd;
+
+}
+
+
+
+/* ===========================
+   ROW COLORS
+=========================== */
+
+tbody tr:nth-child(even) {
+
+    background:
+
+        #f9f9f959;
+
+}
+
+
+
+tbody tr:nth-child(odd) {
+
+    background:
+
+        #ffffffc0;
+
+}
+
+
+
+/* ===========================
+   ROW HOVER
+=========================== */
+
+tbody tr:hover {
+
+    background:
+
+        #015c5d39;
+
+}
+
+
+
+/* ===========================
+   PRESCRIPTION BUTTON
+=========================== */
+
+/*
+Zoom effect
++
+brightness effect
+*/
+
+.prescription-btn {
+
+    width: 30px;
+
+    height: 30px;
+
+    cursor: pointer;
+
+    transition:
+
+        transform .2s,
+
+        filter .2s;
+
+}
+
+
+
+.prescription-btn:hover {
+
+    transform:
+
+        scale(1.1);
+
+    filter:
+
+        brightness(120%);
+
+}
+
+
+
+.prescription-btn:active {
+
+    transform:
+
+        scale(.95);
+
+}
+
+
+
+/* ===========================
+   EMPTY RECORD MESSAGE
+=========================== */
+
+.noPatientRecord {
+
+    font-size: 16px;
+
+    font-style: italic;
+
+    color: gray;
+
+}
+
+
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+/*
+Smaller screens
+*/
+
+@media (max-width:768px) {
+
+    .main-content {
+
+        padding: 20px;
+
+    }
+
+    .filter-section {
+
+        flex-direction: column;
+
+    }
+
+    table {
+
+        font-size: 12px;
+
+    }
+
+    th,
+    td {
+
+        padding: 10px;
+
+    }
+
+    .searchBar,
+    #searchBar {
+
+        width: 100%;
+
+    }
+
+}
 /* 
 **Table Header (`.table-header`)**
 

@@ -1,5 +1,391 @@
 /*this is the style sheet for the adminDashboard. */
+/* this is the style sheet for the adminDashboard */
 
+/* ==========================
+   Global Reset
+========================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ==========================
+   Base Layout
+========================== */
+
+html,
+body {
+
+    height: 100%;
+
+    font-family:
+        Arial,
+        sans-serif;
+
+}
+
+/* ==========================
+   Wrapper
+========================== */
+
+.wrapper {
+
+    display: flex;
+
+    flex-direction: column;
+
+    min-height: 100vh;
+
+}
+
+/* ==========================
+   Heading
+========================== */
+
+h2 {
+
+    font-size: 32px;
+
+    font-weight: bold;
+
+    margin-bottom: 50px;
+
+    color: #003e3e;
+
+}
+
+/* ==========================
+   Main Content
+========================== */
+
+.main-content {
+
+    flex-grow: 1;
+
+    padding: 40px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    text-align: center;
+
+    background-image:
+        url("../images/index.png");
+
+    background-size: cover;
+
+    background-position: center;
+
+    background-repeat: no-repeat;
+
+    background-attachment: fixed;
+
+}
+
+/* ==========================
+   Search + Filters
+========================== */
+
+.search-section,
+.filter-section {
+
+    width: 100%;
+
+    max-width: 900px;
+
+    display: flex;
+
+    gap: 16px;
+
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    margin-bottom: 24px;
+
+}
+
+/* ==========================
+   Search Input
+========================== */
+
+#searchBar {
+
+    width: 350px;
+
+    padding: 12px;
+
+    border-radius: 10px;
+
+    border: 1px solid #ccc;
+
+    font-size: 15px;
+
+}
+
+#searchBar:focus {
+
+    outline: none;
+
+    border-color: #015c5d;
+
+}
+
+/* ==========================
+   Select Dropdown
+========================== */
+
+select {
+
+    width: 220px;
+
+    padding: 12px;
+
+    border-radius: 10px;
+
+    border: 1px solid #ccc;
+
+    cursor: pointer;
+
+}
+
+select:focus {
+
+    outline: none;
+
+    border-color: #015c5d;
+
+}
+
+/* ==========================
+   Primary Buttons
+========================== */
+
+button {
+
+    background-color: #A62B1F;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 12px;
+
+    padding: 10px 20px;
+
+    margin-top: 20px;
+
+    width: 200px;
+
+    cursor: pointer;
+
+    font-size: 16px;
+
+    transition: 0.3s ease;
+
+}
+
+button:hover {
+
+    background-color: #A62B1F;
+
+}
+
+/* ==========================
+   Admin Buttons
+========================== */
+
+.adminBtn {
+
+    background-color: #f4f4f4;
+
+    color: #333;
+
+    width: 110px;
+
+    padding: 10px 0;
+
+    font-weight: bold;
+
+}
+
+.adminBtn:hover {
+
+    color: #A62B1F;
+
+}
+
+/* ==========================
+   Doctor Cards
+========================== */
+
+#content {
+
+    width: 100%;
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    justify-content: center;
+
+    gap: 20px;
+
+    margin-top: 30px;
+
+}
+
+.doctor-card {
+
+    width: 300px;
+
+    padding: 20px;
+
+    border-radius: 14px;
+
+    background: white;
+
+    box-shadow:
+        0 4px 18px
+        rgba(0,0,0,0.12);
+
+}
+
+.doctor-card h3 {
+
+    color: #003e3e;
+
+    margin-bottom: 10px;
+
+}
+
+/* ==========================
+   Modal
+========================== */
+
+.modal {
+
+    display: none;
+
+    position: fixed;
+
+    top: 0;
+
+    left: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    background:
+        rgba(0,0,0,0.45);
+
+    justify-content: center;
+
+    align-items: center;
+
+    z-index: 999;
+
+}
+
+.modal-content {
+
+    background: white;
+
+    width: 450px;
+
+    max-width: 90%;
+
+    padding: 30px;
+
+    border-radius: 14px;
+
+    position: relative;
+
+}
+
+.close {
+
+    position: absolute;
+
+    top: 10px;
+
+    right: 20px;
+
+    font-size: 28px;
+
+    cursor: pointer;
+
+}
+
+.close:hover {
+
+    color: #A62B1F;
+
+}
+
+/* ==========================
+   Modal Inputs
+========================== */
+
+.modal input,
+.modal select {
+
+    width: 100%;
+
+    margin-top: 10px;
+
+    padding: 12px;
+
+    border-radius: 8px;
+
+    border: 1px solid #ccc;
+
+}
+
+.modal input:focus,
+.modal select:focus {
+
+    outline: none;
+
+    border-color: #015c5d;
+
+}
+
+/* ==========================
+   Responsive
+========================== */
+
+@media (max-width:768px) {
+
+    .search-section,
+    .filter-section {
+
+        flex-direction: column;
+
+        align-items: center;
+
+    }
+
+    #searchBar,
+    select {
+
+        width: 100%;
+
+    }
+
+    .doctor-card {
+
+        width: 100%;
+
+    }
+
+}
 /* 
 Global Reset (`*`)
 

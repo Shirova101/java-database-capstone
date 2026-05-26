@@ -39,3 +39,411 @@ Import the overlay function for booking appointments from loggedPatient.js
   Append doctor info and action buttons to the car
   Return the complete doctor card element
 */
+/* doctorCard.js */
+
+/*
+===================================================
+Doctor Card Component
+===================================================
+
+Displays:
+
+• Doctor Name
+• Specialty
+• Email
+• Availability
+
+Actions:
+
+Admin
+→ Delete
+
+Patient
+→ Login Prompt
+
+Logged Patient
+→ Booking
+===================================================
+*/
+
+
+
+/*
+Services
+*/
+
+import {
+
+    deleteDoctor
+
+}
+
+from "../services/doctorServices.js";
+
+
+
+import {
+
+    getPatientData
+
+}
+
+from "../services/patientServices.js";
+
+
+
+import {
+
+    showBookingOverlay
+
+}
+
+from "../services/loggedPatient.js";
+
+
+
+export function createDoctorCard(
+
+    doctor
+
+) {
+
+
+
+    /*
+    Main Card
+    */
+
+    const card =
+        document.createElement(
+            "div"
+        );
+
+    card.classList.add(
+        "doctor-card"
+    );
+
+
+
+    /*
+    Current User
+    */
+
+    const role =
+        localStorage.getItem(
+            "userRole"
+        );
+
+
+
+    /*
+    Doctor Info
+    */
+
+    const infoDiv =
+        document.createElement(
+            "div"
+        );
+
+    infoDiv.classList.add(
+        "doctor-info"
+    );
+
+
+
+    const name =
+        document.createElement(
+            "h3"
+        );
+
+    name.textContent =
+        doctor.name;
+
+
+
+    const specialty =
+        document.createElement(
+            "p"
+        );
+
+    specialty.textContent =
+        doctor.specialty;
+
+
+
+    const email =
+        document.createElement(
+            "p"
+        );
+
+    email.textContent =
+        doctor.email;
+
+
+
+    const available =
+        document.createElement(
+            "p"
+        );
+
+    available.textContent =
+
+        doctor.availableTimes
+            ?.join(", ")
+
+        ||
+
+        "Unavailable";
+
+
+
+    infoDiv.append(
+
+        name,
+
+        specialty,
+
+        email,
+
+        available
+
+    );
+
+
+
+    /*
+    Actions
+    */
+
+    const actions =
+        document.createElement(
+            "div"
+        );
+
+    actions.classList.add(
+        "card-actions"
+    );
+
+
+
+    /*
+    ADMIN
+    */
+
+    if (
+
+        role === "admin"
+
+    ) {
+
+        const removeBtn =
+            document.createElement(
+                "button"
+            );
+
+
+
+        removeBtn.textContent =
+            "Delete";
+
+
+
+        removeBtn.addEventListener(
+
+            "click",
+
+            async () => {
+
+                const confirmed =
+                    confirm(
+                        "Delete doctor?"
+                    );
+
+
+
+                if (!confirmed) {
+
+                    return;
+
+                }
+
+
+
+                const token =
+                    localStorage
+                        .getItem(
+                            "token"
+                        );
+
+
+
+                const success =
+                    await deleteDoctor(
+
+                        doctor.id,
+
+                        token
+
+                    );
+
+
+
+                if (success) {
+
+                    card.remove();
+
+                }
+
+            }
+
+        );
+
+
+
+        actions.appendChild(
+            removeBtn
+        );
+
+    }
+
+
+
+    /*
+    PATIENT
+    */
+
+    else if (
+
+        role === "patient"
+
+    ) {
+
+        const book =
+            document.createElement(
+                "button"
+            );
+
+
+
+        book.textContent =
+            "Book Now";
+
+
+
+        book.addEventListener(
+
+            "click",
+
+            () => {
+
+                alert(
+
+                    "Patient needs to login first."
+
+                );
+
+            }
+
+        );
+
+
+
+        actions.appendChild(
+            book
+        );
+
+    }
+
+
+
+    /*
+    LOGGED PATIENT
+    */
+
+    else if (
+
+        role ===
+        "loggedPatient"
+
+    ) {
+
+        const book =
+            document.createElement(
+                "button"
+            );
+
+
+
+        book.textContent =
+            "Book Now";
+
+
+
+        book.addEventListener(
+
+            "click",
+
+            async (
+
+                e
+
+            ) => {
+
+                const token =
+                    localStorage
+                        .getItem(
+                            "token"
+                        );
+
+
+
+                const patient =
+                    await getPatientData(
+                        token
+                    );
+
+
+
+                showBookingOverlay(
+
+                    e,
+
+                    doctor,
+
+                    patient
+
+                );
+
+            }
+
+        );
+
+
+
+        actions.appendChild(
+            book
+        );
+
+    }
+
+
+
+    /*
+    Final Assembly
+    */
+
+    card.appendChild(
+        infoDiv
+    );
+
+
+
+    card.appendChild(
+        actions
+    );
+
+
+
+    return card;
+
+}
