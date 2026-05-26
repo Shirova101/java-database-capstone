@@ -16,7 +16,7 @@ public interface PatientRepository
 
 
     // Find patient by email OR phone
-    Patient findByEmailOrPhone(
+    Patient findByEmailOrPhoneNumber(
             String email,
             String phoneNumber
     );

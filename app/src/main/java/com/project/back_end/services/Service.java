@@ -18,6 +18,7 @@ import com.project.back_end.repo.AdminRepository;
 import com.project.back_end.repo.DoctorRepository;
 import com.project.back_end.repo.PatientRepository;
 
+@org.springframework.stereotype.Service
 public class Service {
 
     private final TokenService tokenService;
@@ -354,7 +355,7 @@ public class Service {
 
         Patient existing =
                 patientRepository
-                        .findByEmailOrPhone(
+                        .findByEmailOrPhoneNumber(
                                 patient.getEmail(),
                                 patient.getPhoneNumber()
                         );
