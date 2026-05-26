@@ -52,3 +52,298 @@
     - Call renderContent() (assumes it sets up the UI layout)
     - Call loadAppointments() to display today's appointments by default
 */
+/* doctorDashboard.js
+   Doctor dashboard logic
+   - Load appointments
+   - Search patients
+   - Filter by date
+*/
+
+import {
+    getAllAppointments
+} from "./services/appointmentRecordService.js";
+
+import {
+    createPatientRow
+} from "./components/patientRows.js";
+
+
+/* -----------------------------
+   Global State
+----------------------------- */
+
+const tableBody =
+    document.getElementById(
+        "patientTableBody"
+    );
+
+let selectedDate =
+    new Date()
+        .toISOString()
+        .split("T")[0];
+
+const token =
+    localStorage.getItem(
+        "token"
+    );
+
+let patientName =
+    null;
+
+
+
+/* -----------------------------
+   Search Patient
+----------------------------- */
+
+document
+    .getElementById(
+        "searchBar"
+    )
+    ?.addEventListener(
+
+        "input",
+
+        event => {
+
+            const value =
+                event.target.value
+                    .trim();
+
+            patientName =
+                value || "null";
+
+            loadAppointments();
+
+        }
+
+    );
+
+
+
+
+/* -----------------------------
+   Today's Appointments
+----------------------------- */
+
+document
+    .getElementById(
+        "todayButton"
+    )
+    ?.addEventListener(
+
+        "click",
+
+        () => {
+
+            selectedDate =
+                new Date()
+                    .toISOString()
+                    .split("T")[0];
+
+            document
+                .getElementById(
+                    "datePicker"
+                )
+                .value =
+                selectedDate;
+
+            loadAppointments();
+
+        }
+
+    );
+
+
+
+
+/* -----------------------------
+   Date Filter
+----------------------------- */
+
+document
+    .getElementById(
+        "datePicker"
+    )
+    ?.addEventListener(
+
+        "change",
+
+        event => {
+
+            selectedDate =
+                event.target.value;
+
+            loadAppointments();
+
+        }
+
+    );
+
+
+
+
+/* -----------------------------
+   Load Appointments
+----------------------------- */
+
+async function loadAppointments() {
+
+    try {
+
+        const appointments =
+
+            await getAllAppointments(
+
+                selectedDate,
+
+                patientName,
+
+                token
+
+            );
+
+
+
+        tableBody.innerHTML =
+            "";
+
+
+
+        if (
+
+            !appointments ||
+
+            appointments.length === 0
+
+        ) {
+
+            tableBody.innerHTML = `
+
+                <tr>
+
+                    <td colspan="5">
+
+                        No Appointments found for today
+
+                    </td>
+
+                </tr>
+
+            `;
+
+            return;
+
+        }
+
+
+
+        appointments.forEach(
+
+            appointment => {
+
+                const patient = {
+
+                    id:
+                        appointment.patient?.id,
+
+                    name:
+                        appointment.patient?.name,
+
+                    phone:
+                        appointment.patient?.phoneNumber,
+
+                    email:
+                        appointment.patient?.email
+
+                };
+
+
+
+                const row =
+
+                    createPatientRow(
+
+                        patient,
+
+                        appointment
+
+                    );
+
+
+
+                tableBody.appendChild(
+                    row
+                );
+
+            }
+
+        );
+
+    }
+
+    catch (
+
+        error
+
+    ) {
+
+        console.error(
+
+            "loadAppointments:",
+
+            error
+
+        );
+
+
+
+        tableBody.innerHTML = `
+
+            <tr>
+
+                <td colspan="5">
+
+                    Error loading appointments.
+                    Try again later.
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+}
+
+
+
+
+
+/* -----------------------------
+   Initial Page Render
+----------------------------- */
+
+document.addEventListener(
+
+    "DOMContentLoaded",
+
+    () => {
+
+        if (
+
+            typeof renderContent ===
+            "function"
+
+        ) {
+
+            renderContent();
+
+        }
+
+        loadAppointments();
+
+    }
+
+);

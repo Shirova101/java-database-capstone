@@ -70,3 +70,456 @@
 
     If saving fails, show an error message
 */
+/* adminDashboard.js
+   Admin dashboard logic
+   - Load doctors
+   - Search/filter doctors
+   - Add doctor
+*/
+
+import { openModal } from "../components/modals.js";
+
+import {
+    getDoctors,
+    filterDoctors,
+    saveDoctor
+} from "./services/doctorServices.js";
+
+import {
+    createDoctorCard
+} from "./components/doctorCard.js";
+
+
+/* -----------------------------
+   Page Initialization
+----------------------------- */
+
+window.addEventListener(
+    "DOMContentLoaded",
+
+    () => {
+
+        loadDoctorCards();
+
+        bindEvents();
+
+    }
+);
+
+
+
+/* -----------------------------
+   Attach Events
+----------------------------- */
+
+function bindEvents() {
+
+    const addBtn =
+        document.getElementById(
+            "addDocBtn"
+        );
+
+    if (addBtn) {
+
+        addBtn.addEventListener(
+            "click",
+
+            () => openModal(
+                "addDoctor"
+            )
+        );
+
+    }
+
+
+    document
+        .getElementById(
+            "searchBar"
+        )
+        ?.addEventListener(
+            "input",
+
+            filterDoctorsOnChange
+        );
+
+
+    document
+        .getElementById(
+            "filterTime"
+        )
+        ?.addEventListener(
+            "change",
+
+            filterDoctorsOnChange
+        );
+
+
+    document
+        .getElementById(
+            "filterSpecialty"
+        )
+        ?.addEventListener(
+            "change",
+
+            filterDoctorsOnChange
+        );
+
+}
+
+
+
+/* -----------------------------
+   Load Doctors
+----------------------------- */
+
+async function loadDoctorCards() {
+
+    try {
+
+        const doctors =
+            await getDoctors();
+
+        renderDoctorCards(
+            doctors
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "loadDoctorCards:",
+            error
+        );
+
+    }
+
+}
+
+
+
+
+
+/* -----------------------------
+   Render Cards
+----------------------------- */
+
+function renderDoctorCards(
+    doctors
+) {
+
+    const content =
+
+        document.getElementById(
+            "content"
+        );
+
+
+
+    content.innerHTML = "";
+
+
+
+    if (
+
+        !doctors ||
+
+        doctors.length === 0
+
+    ) {
+
+        content.innerHTML = `
+
+        <p>
+
+            No doctors found
+
+        </p>
+
+        `;
+
+        return;
+
+    }
+
+
+
+    doctors.forEach(
+
+        doctor => {
+
+            content.appendChild(
+
+                createDoctorCard(
+                    doctor
+                )
+
+            );
+
+        }
+
+    );
+
+}
+
+
+
+
+
+/* -----------------------------
+   Filter Doctors
+----------------------------- */
+
+async function filterDoctorsOnChange() {
+
+    try {
+
+        const name =
+
+            document
+                .getElementById(
+                    "searchBar"
+                )
+                ?.value
+                ?.trim();
+
+
+
+        const time =
+
+            document
+                .getElementById(
+                    "filterTime"
+                )
+                ?.value;
+
+
+
+        const specialty =
+
+            document
+                .getElementById(
+                    "filterSpecialty"
+                )
+                ?.value;
+
+
+
+        const result =
+
+            await filterDoctors(
+
+                name ||
+
+                null,
+
+                time ||
+
+                null,
+
+                specialty ||
+
+                null
+
+            );
+
+
+
+        renderDoctorCards(
+
+            result.doctors ||
+
+            []
+
+        );
+
+    }
+
+    catch (
+
+        error
+
+    ) {
+
+        console.error(
+
+            error
+
+        );
+
+
+
+        alert(
+
+            "Unable to filter doctors"
+
+        );
+
+    }
+
+}
+
+
+
+
+
+/* -----------------------------
+   Add Doctor
+----------------------------- */
+
+window.adminAddDoctor =
+
+async function () {
+
+
+
+    const token =
+
+        localStorage.getItem(
+            "token"
+        );
+
+
+
+    if (!token) {
+
+        alert(
+            "Login required"
+        );
+
+        return;
+
+    }
+
+
+
+    const availableTimes =
+
+        [
+
+            ...document.querySelectorAll(
+
+                "input[name='availableTimes']:checked"
+
+            )
+
+        ]
+
+        .map(
+
+            checkbox =>
+
+                checkbox.value
+
+        );
+
+
+
+    const doctor = {
+
+        name:
+
+            document
+                .getElementById(
+                    "doctorName"
+                )
+                ?.value,
+
+
+
+        specialty:
+
+            document
+                .getElementById(
+                    "specialty"
+                )
+                ?.value,
+
+
+
+        email:
+
+            document
+                .getElementById(
+                    "doctorEmail"
+                )
+                ?.value,
+
+
+
+        password:
+
+            document
+                .getElementById(
+                    "doctorPassword"
+                )
+                ?.value,
+
+
+
+        phoneNumber:
+
+            document
+                .getElementById(
+                    "doctorPhone"
+                )
+                ?.value,
+
+
+
+        availableTimes
+
+    };
+
+
+
+    const result =
+
+        await saveDoctor(
+
+            doctor,
+
+            token
+
+        );
+
+
+
+    if (
+
+        result.success
+
+    ) {
+
+        alert(
+            result.message
+        );
+
+
+
+        document
+            .getElementById(
+                "modal"
+            )
+            ?.classList
+            .remove(
+                "show"
+            );
+
+
+
+        loadDoctorCards();
+
+        return;
+
+    }
+
+
+
+    alert(
+
+        result.message
+
+    );
+
+};

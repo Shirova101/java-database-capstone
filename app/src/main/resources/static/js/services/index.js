@@ -56,3 +56,587 @@
     - Log the error to the console
     - Show a generic error message
 */
+/* index.js */
+
+/*
+=========================================================
+Role Based Login Handler
+=========================================================
+
+Responsibilities:
+
+1. Open login modals
+2. Handle Admin Login
+3. Handle Doctor Login
+4. Store JWT token
+5. Store selected role
+6. Redirect/render pages
+
+Dependencies:
+- modals.js
+- config.js
+- render.js
+=========================================================
+*/
+
+
+
+/*
+---------------------------------------------------------
+Imports
+---------------------------------------------------------
+*/
+
+/*
+Open modal component
+Handles popup rendering
+*/
+
+import {
+
+    openModal
+
+}
+
+from "../components/modals.js";
+
+
+
+/*
+Base API URL
+Example:
+http://localhost:8080/api
+*/
+
+import {
+
+    API_BASE_URL
+
+}
+
+from "../config/config.js";
+
+
+
+/*
+Role renderer
+Stores role and handles page navigation
+*/
+
+import {
+
+    selectRole
+
+}
+
+from "../render.js";
+
+
+
+
+
+/*
+---------------------------------------------------------
+API ENDPOINTS
+---------------------------------------------------------
+*/
+
+const ADMIN_API =
+
+    API_BASE_URL +
+
+    "/admin";
+
+
+
+const DOCTOR_API =
+
+    API_BASE_URL +
+
+    "/doctor/login";
+
+
+
+
+
+/*
+=========================================================
+PAGE INITIALIZATION
+=========================================================
+
+Runs after DOM loads
+
+Attaches click handlers
+=========================================================
+*/
+
+window.onload = function () {
+
+
+
+    /*
+    Select Buttons
+    */
+
+    const adminBtn =
+
+        document.getElementById(
+            "adminLogin"
+        );
+
+
+
+    const doctorBtn =
+
+        document.getElementById(
+            "doctorLogin"
+        );
+
+
+
+    /*
+    ---------------------
+    Admin Login Modal
+    ---------------------
+    */
+
+    if (
+
+        adminBtn
+
+    ) {
+
+        adminBtn.addEventListener(
+
+            "click",
+
+            () => {
+
+                openModal(
+
+                    "adminLogin"
+
+                );
+
+            }
+
+        );
+
+    }
+
+
+
+    /*
+    ---------------------
+    Doctor Login Modal
+    ---------------------
+    */
+
+    if (
+
+        doctorBtn
+
+    ) {
+
+        doctorBtn.addEventListener(
+
+            "click",
+
+            () => {
+
+                openModal(
+
+                    "doctorLogin"
+
+                );
+
+            }
+
+        );
+
+    }
+
+};
+
+
+
+
+
+/*
+=========================================================
+ADMIN LOGIN
+=========================================================
+
+Triggered from modal
+=========================================================
+*/
+
+window.adminLoginHandler =
+
+async function () {
+
+
+
+    try {
+
+
+
+        /*
+        ------------------
+        Read Inputs
+        ------------------
+        */
+
+        const username =
+
+            document
+                .getElementById(
+                    "username"
+                )
+                .value;
+
+
+
+        const password =
+
+            document
+                .getElementById(
+                    "password"
+                )
+                .value;
+
+
+
+        /*
+        Build Request
+        */
+
+        const admin = {
+
+            username,
+
+            password
+
+        };
+
+
+
+        /*
+        ------------------
+        Send Login Request
+        ------------------
+        */
+
+        const response =
+
+            await fetch(
+
+                ADMIN_API,
+
+                {
+
+                    method:
+
+                        "POST",
+
+
+
+                    headers: {
+
+                        "Content-Type":
+
+                            "application/json"
+
+                    },
+
+
+
+                    body:
+
+                        JSON.stringify(
+
+                            admin
+
+                        )
+
+                }
+
+            );
+
+
+
+        /*
+        ------------------
+        Handle Success
+        ------------------
+        */
+
+        if (
+
+            response.ok
+
+        ) {
+
+            const data =
+
+                await response.json();
+
+
+
+            /*
+            Save Token
+            */
+
+            localStorage.setItem(
+
+                "token",
+
+                data.token
+
+            );
+
+
+
+            /*
+            Store Role
+            */
+
+            selectRole(
+
+                "admin"
+
+            );
+
+
+
+            return;
+
+        }
+
+
+
+        /*
+        Login Failed
+        */
+
+        alert(
+
+            "Invalid credentials!"
+
+        );
+
+
+
+    }
+
+    catch (
+
+        error
+
+    ) {
+
+
+
+        console.error(
+
+            error
+
+        );
+
+
+
+        alert(
+
+            "Unexpected error occurred"
+
+        );
+
+    }
+
+};
+
+
+
+
+
+
+/*
+=========================================================
+DOCTOR LOGIN
+=========================================================
+
+Triggered from modal
+=========================================================
+*/
+
+window.doctorLoginHandler =
+
+async function () {
+
+
+
+    try {
+
+
+
+        /*
+        ------------------
+        Read Inputs
+        ------------------
+        */
+
+        const email =
+
+            document
+                .getElementById(
+                    "email"
+                )
+                .value;
+
+
+
+        const password =
+
+            document
+                .getElementById(
+                    "doctorPassword"
+                )
+                .value;
+
+
+
+        /*
+        Build Payload
+        */
+
+        const doctor = {
+
+            email,
+
+            password
+
+        };
+
+
+
+        /*
+        ------------------
+        Send Request
+        ------------------
+        */
+
+        const response =
+
+            await fetch(
+
+                DOCTOR_API,
+
+                {
+
+                    method:
+
+                        "POST",
+
+
+
+                    headers: {
+
+                        "Content-Type":
+
+                            "application/json"
+
+                    },
+
+
+
+                    body:
+
+                        JSON.stringify(
+
+                            doctor
+
+                        )
+
+                }
+
+            );
+
+
+
+        /*
+        Success
+        */
+
+        if (
+
+            response.ok
+
+        ) {
+
+            const data =
+
+                await response.json();
+
+
+
+            localStorage.setItem(
+
+                "token",
+
+                data.token
+
+            );
+
+
+
+            selectRole(
+
+                "doctor"
+
+            );
+
+
+
+            return;
+
+        }
+
+
+
+        alert(
+
+            "Invalid credentials!"
+
+        );
+
+
+
+    }
+
+    catch (
+
+        error
+
+    ) {
+
+
+
+        console.error(
+
+            error
+
+        );
+
+
+
+        alert(
+
+            "Unexpected error occurred"
+
+        );
+
+
+
+    }
+
+};
